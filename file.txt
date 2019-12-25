@@ -1,0 +1,7 @@
+It works!
+uri=/
+decoded_uri=/
+username=(null)
+passwd=(null)
+post_data={"username":"ace", "passwd":"123123", "isDriver":"yes"}
+
