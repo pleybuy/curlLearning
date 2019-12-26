@@ -40,7 +40,7 @@ int main()
 	//2. 初始化一个句柄
 	curl = curl_easy_init();
 	//3 给该句柄设定一些参数
-	curl_easy_setopt(curl, CURLOPT_URL , "http://172.17.4.10");
+	curl_easy_setopt(curl, CURLOPT_URL , "http://172.17.4.10:8081/tdsest");
 
 	//4 处理服务器响应结果 给当前句柄设置一个处理从服务器返回数据的回调函数
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
@@ -58,7 +58,7 @@ int main()
         for(int i = 0; i < responseData.data_len; i++){
             printf("%c", responseData.data[i]);
         }
-        printf("============================================\n");
+        printf("\n============================================\n");
         return 0;
     }else {
         printf("curl easy perform error, res = %d\n", res);

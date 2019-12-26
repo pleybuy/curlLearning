@@ -18,7 +18,7 @@ int main(){
 		return 1;
 	}
 
-	curl_easy_setopt(curl, CURLOPT_URL, "http://172.17.4.10:80");
+	curl_easy_setopt(curl, CURLOPT_URL, "http://172.17.4.10:7777");
 	//变成post请求
 	curl_easy_setopt(curl, CURLOPT_POST, 1);
 	
@@ -32,7 +32,6 @@ int main(){
 		return 1;
 	}
 	//处理服务器的返回数据
-
 	
 	//清理
 	curl_easy_cleanup(curl);

@@ -24,7 +24,7 @@ size_t write_callback(char *ptr, size_t size, size_t nmemb, void *userdata)
 	printf("写入的总长度%d\n", fwrite_len);
 }
 
-int main3()
+int main()
 {
 	FILE* fp = NULL;
 	//创建句柄
@@ -49,7 +49,7 @@ int main3()
 	curl_easy_setopt(curl, CURLOPT_POSTFIELDS, POSTDATA);
 	
 	//给当前句柄设置一个处理从服务器返回数据的回调函数
-	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
+	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION,write_callback);
 
 	//给回调函数传递一个形参
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
