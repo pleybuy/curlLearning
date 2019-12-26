@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <curl/curl.h>
 #define POSTDATA "{\"username\":\"ace\", \"pwd\":\"123123\",\"type\":\"10\"}"
-int main2(){
+int main(){
 	CURL* curl = NULL;
 	CURLcode res;
 	curl = curl_easy_init();
@@ -18,7 +18,7 @@ int main2(){
 		return 1;
 	}
 
-	curl_easy_setopt(curl, CURLOPT_URL, "http://172.17.4.10:7777");
+	curl_easy_setopt(curl, CURLOPT_URL, "http://172.17.4.10:80");
 	//变成post请求
 	curl_easy_setopt(curl, CURLOPT_POST, 1);
 	
@@ -32,6 +32,7 @@ int main2(){
 		return 1;
 	}
 	//处理服务器的返回数据
+
 	
 	//清理
 	curl_easy_cleanup(curl);
