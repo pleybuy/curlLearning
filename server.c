@@ -10,6 +10,7 @@
 #include <event2/event.h>
 #include <event2/http_struct.h>
 #include <event2/buffer.h>
+#include <include/cJSON.h>
 
 void generic_cb(struct evhttp_request* req, void* arg)
 {
@@ -20,14 +21,60 @@ void generic_cb(struct evhttp_request* req, void* arg)
 
 void test_cb(struct evhttp_request* req, void* arg)
 {
-    char* s = "This is the test223232 buf";
+    const char* uri = evhttp_request_get_uri(req);
+    /*判断req是不是get请求*/
+    if(evhttp_request_get_command(req) == EVHTTP_REQ_GET){
+        struct evbuffer* buf = evbuffer_new();
+        if(buf == NULL) return;
+        evbuffer_add_printf(buf, "Requested: %s\n", uri);
+        evhttp_send_reply(req, HTTP_OK, "OK", buf);
+        printf("get uri:%s\n", uri);
+        return;
+    }
+    //如果不是post请求  直接返回 200 OK
+    if(evhttp_request_get_command(req) != EVHTTP_REQ_POST){
+        evhttp_send_reply(req, 200, "OK", NULL);
+        return;
+    }
+    printf("Got a POST request for <%s>\n", uri);
+    //todo 记录日志
+    //判断URI是否合法
+    struct evhttp_uri *decoded = evhttp_uri_parse(uri);
+    if(!decoded){
+        printf("Illegal URI. \n");
+        return;
+    }
+    /* Decode the payload */
+    struct evbuffer *buf = evhttp_request_get_input_buffer(req);
+    evbuffer_add(buf,"",1);
+    char *payload = (char *)evbuffer_pullup(buf, -1);
+    int post_data_len = evbuffer_get_length(buf);
+    char request_data_buf[4096] = {0};
+    memcpy(request_data_buf, payload, post_data_len);
+    printf("[post_data][%d] = \n%s\n", post_data_len, payload);
+    //unpack json
+    cJSON* root = cJSON_Parse(request_data_buf);
+    cJSON* name = cJSON_GetObjectItem(root, "name");
+    cJSON* age = cJSON_GetObjectItem(root, "age");
+    printf("================\n name = %s\n age = %d \n===================", name->valuestring, age->valueint);
+
+
+    //todo some work to do with unpacked json data
+    cJSON_Delete(root);
+    //回包
+    root = cJSON_CreateObject();
+    cJSON_AddStringToObject(root, "result", "OK");
+    cJSON_AddStringToObject(root, "sessionID", "1149074534");
+    char* res = cJSON_Print(root);
+    //char* s = "This is the test buf";
     //evbuffer_add(req->output_buffer, s, strlen(s));
+
     //HTTP header
     evhttp_add_header(evhttp_request_get_output_headers(req), "Server", "MoCarHttpd v0.1");
     evhttp_add_header(evhttp_request_get_output_headers(req), "Content-Type", "text/plain; charset=UTF-8");
     evhttp_add_header(evhttp_request_get_output_headers(req), "Connection", "close");
     struct evbuffer *evb = evbuffer_new();
-    evbuffer_add_printf(evb, "%s", s);
+    evbuffer_add_printf(evb, "%s", res);
     //将封装好的evbuffer 发送给客户端
     evhttp_send_reply(req, 200, "OK", evb);
 }
