@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "make_log.h"
 
 //libevent http server header files
 #include <event2/http.h>
@@ -29,6 +30,7 @@ void test_cb(struct evhttp_request* req, void* arg)
         evbuffer_add_printf(buf, "Requested: %s\n", uri);
         evhttp_send_reply(req, HTTP_OK, "OK", buf);
         printf("get uri:%s\n", uri);
+        LOG("server","test_cb", "get uri:%s\n", uri);
         return;
     }
     //如果不是post请求  直接返回 200 OK
@@ -37,7 +39,8 @@ void test_cb(struct evhttp_request* req, void* arg)
         return;
     }
     printf("Got a POST request for <%s>\n", uri);
-    //todo 记录日志
+    LOG("server","test_cb", "Got a POST request for <%s>\n", uri);
+
     //判断URI是否合法
     struct evhttp_uri *decoded = evhttp_uri_parse(uri);
     if(!decoded){

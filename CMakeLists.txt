@@ -5,7 +5,8 @@ set(CMAKE_CXX_STANDARD 11)
 include_directories(
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${CMAKE_CURRENT_SOURCE_DIR}/include
-        G:\\Develop\\common\\include
+        #G:\\Develop\\common\\include
+        /Users/san/common/include
 )
 aux_source_directory(. SRC_LIST)
 add_executable(curlTest ${SRC_LIST})

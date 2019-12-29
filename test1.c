@@ -10,6 +10,7 @@
 #include <string.h>
 #include <curl/curl.h>
 #include "include/cJSON.h"
+#include "make_log.h"
 /*
  *ptr 表示收到服务器返回数据的首地址
  *size 表示返回数据的大小
@@ -70,6 +71,7 @@ int main()
 
         printf("============================================\n");
         //7.处理返回的数据
+        LOG("client", "responseData", responseData.data);
         printf("%s\n", responseData.data);
         printf("\n============================================\n");
         cJSON* root = cJSON_Parse(responseData.data);
