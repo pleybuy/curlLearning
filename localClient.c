@@ -1,24 +1,19 @@
 /*************************************************************************
-	> File Name: test2.c
+	> File Name: localClient.c
 	> Author: pleybuy
 	> Mail: 1149074534@qq.com 
-	> Created Time: Wed 11 Dec 2019 09:26:03 PM CST
+	> Created Time: Mon 30 Dec 2019 01:12:01 PM CST
  ************************************************************************/
 
 #include<stdio.h>
-#include <event2/event.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/un.h>
+#include <string.h>
 int main(){
-    struct event_base* base = event_base_new();
-    if(!base){
-        printf("event base init error\n");
-        return -1;
-    }
 
 
-	
 
 	return 0;
-	
-
 }
 

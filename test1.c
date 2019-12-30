@@ -11,17 +11,16 @@
 #include <curl/curl.h>
 #include "include/cJSON.h"
 #include "make_log.h"
-/*
- *ptr 表示收到服务器返回数据的首地址
- *size 表示返回数据的大小
- *nmemb表示返回数据的个数
- *userdata用户给回调函数传递的形参
- */
 typedef struct response_data{
     char data[4096];
     size_t data_len;
 }response_data_t;
-
+/*
+ *ptr 表示收到服务器返回数据的首地址
+ *size 表示返回数据的大小
+ *nmemb 表示返回数据的个数
+ *userdata用户给回调函数传递的形参
+ */
 size_t write_callback(char *ptr, size_t size, size_t nmemb, void *responseData)
 {
     response_data_t *rsp = (response_data_t *)responseData;

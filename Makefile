@@ -9,9 +9,10 @@ obj = $(patsubst %.c, %.o, $(src))
 
 test_curl=./test_curl
 server=./server
+libeventTest=./libeventTest
 
 
-target=$(test_curl) $(server)
+target=$(test_curl) $(server) $(libeventTest)
 ALL:$(target)
 
 #生成所有的.o文件
@@ -25,6 +26,11 @@ $(server):server.o cJSON.o make_log.o
 #test_curl程序
 $(test_curl):test1.o cJSON.o make_log.o
 	$(cc) $^ -o $@ $(LIBS)
+
+#libevent测试程序
+$(libeventTest):test2.o
+	$(cc) $^ -o $@ $(LIBS)
+
 
 #clean
 clean:
