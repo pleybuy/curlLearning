@@ -6,6 +6,7 @@
  ************************************************************************/
 
 #include<stdio.h>
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/un.h>
@@ -17,6 +18,7 @@ int main()
     if(lfd == -1){
         printf("lsock init error, fd = %d\n", lfd);
     }
+    unlink("server.socket");
     struct sockaddr_un serv;
     serv.sun_family = AF_LOCAL;
     strcpy(serv.sun_path, "server.socket");
