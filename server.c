@@ -26,8 +26,15 @@ void test_cb(struct evhttp_request* req, void* arg)
     /*判断req是不是get请求*/
     if(evhttp_request_get_command(req) == EVHTTP_REQ_GET){
         struct evbuffer* buf = evbuffer_new();
-        if(buf == NULL) return;
+        if(buf == NULL) {
+            evhttp_send_error(req, HTTP_NOTFOUND, "server error\n");
+            return;
+        }
         evbuffer_add_printf(buf, "Requested: %s\n", uri);
+        //HTTP header
+        evhttp_add_header(evhttp_request_get_output_headers(req), "Server", "MoCarHttpd v0.1");
+        evhttp_add_header(evhttp_request_get_output_headers(req), "Content-Type", "text/plain; charset=UTF-8");
+        evhttp_add_header(evhttp_request_get_output_headers(req), "Connection", "close");
         evhttp_send_reply(req, HTTP_OK, "OK", buf);
         printf("get uri:%s\n", uri);
         LOG("server","test_cb", "get uri:%s\n", uri);
@@ -67,19 +74,20 @@ void test_cb(struct evhttp_request* req, void* arg)
     //回包
     root = cJSON_CreateObject();
     cJSON_AddStringToObject(root, "result", "OK");
-    cJSON_AddStringToObject(root, "sessionID", "1149074534");
+    cJSON_AddStringToObject(root, "sessionID", "11dssdsd49074534");
     char* res = cJSON_Print(root);
-    //char* s = "This is the test buf";
-    //evbuffer_add(req->output_buffer, s, strlen(s));
 
     //HTTP header
-    evhttp_add_header(evhttp_request_get_output_headers(req), "Server", "MoCarHttpd v0.1");
+    evhttp_add_header(evhttp_request_get_output_headers(req), "Server", "libeventHttpd v0.1");
     evhttp_add_header(evhttp_request_get_output_headers(req), "Content-Type", "text/plain; charset=UTF-8");
     evhttp_add_header(evhttp_request_get_output_headers(req), "Connection", "close");
+    char tmpBuf[10] = {0};
+    sprintf(tmpBuf, "%d", HTTP_OK);
+    evhttp_add_header(evhttp_request_get_output_headers(req), "status", tmpBuf);
     struct evbuffer *evb = evbuffer_new();
     evbuffer_add_printf(evb, "%s", res);
     //将封装好的evbuffer 发送给客户端
-    evhttp_send_reply(req, 200, "OK", evb);
+    evhttp_send_reply(req, HTTP_OK, "OK", evb);
 }
 
 int main()
