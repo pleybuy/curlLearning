@@ -11,6 +11,7 @@
 #include <curl/curl.h>
 #include "include/cJSON.h"
 #include "make_log.h"
+
 typedef struct response_data{
     char data[4096];
     size_t data_len;
@@ -51,6 +52,7 @@ int main()
 	curl = curl_easy_init();
 	//3 给该句柄设定一些参数
 	curl_easy_setopt(curl, CURLOPT_URL , "http://172.17.4.10:8081/test");
+
     //4 变成post请求
     curl_easy_setopt(curl, CURLOPT_POST, 1);
 

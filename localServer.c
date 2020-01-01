@@ -26,9 +26,18 @@ int main()
     //绑定套接字
     int ret = bind(lfd, (struct sockaddr*)&serv, sizeof(serv));
     //判断是否绑定成功
+    if(ret == -1){
+        printf("bind error\n");
+        return -1;
+    }
+
 
     //监听
     ret = listen(lfd, 36);
+    if(ret == -1){
+        printf("listen error\n");
+        return -1;
+    }
 
     //等待接受连接请求
     struct sockaddr_un client;
