@@ -27,20 +27,10 @@ size_t write_callback(char *ptr, size_t size, size_t nmemb, void *responseData)
     //printf("size = %d, nmemb = %d\n", (int)size, (int)nmemb);
     response_data_t *rsp = (response_data_t *)responseData;
     int count = size * nmemb;//数据的长度
-
-    memcpy(rsp->data, ptr, count);
-    rsp->data_len = count;
-    return rsp->data_len;
-}
-size_t head_callback(char *ptr, size_t size, size_t nmemb, void *responseData)
-{
-    response_data_t *rsp = (response_data_t *)responseData;
-    int count = size * nmemb;//数据的长度
     memcpy(rsp->data + rsp->data_len, ptr, count);
     rsp->data_len += count;
     return count;//这边返回值一定要是写入的大小！！！
 }
-
 
 char *getJsonData(){
     cJSON* root = cJSON_CreateObject();
@@ -88,7 +78,7 @@ int main()
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &responseData);
 
     //7. 设置头部回调函数，一旦接收到http头部数据就调用该函数
-    curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, head_callback);
+    curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, write_callback);
     curl_easy_setopt(curl, CURLOPT_HEADERDATA, &headData);
     //curl_easy_setopt(curl, CURLOPT_HEADER, 1);
 
@@ -96,6 +86,12 @@ int main()
     curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 1);
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, 1);
 
+    //9 消息头设置
+    struct curl_slist *headers = NULL;
+    headers = curl_slist_append(headers, "Hey-server-hey: how are you?");
+    headers = curl_slist_append(headers, "X-silly-content: yes");
+    /* pass our list of custom made headers */
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
     //7 将curl句柄向远程服务器提交请求
     res = curl_easy_perform(curl);
@@ -106,9 +102,8 @@ int main()
         LOG("client", "responseData", responseData.data);
         //printf("body = %s\n", responseData.data);
         printf("headLen = %d\n", (int)headData.data_len);
-        printf("head = %s\n", headData.data);
-
-        printf("\n============================================\n");
+        printf("head = %s", headData.data);
+        printf("============================================\n");
         cJSON* root = cJSON_Parse(responseData.data);
         cJSON* result = cJSON_GetObjectItem(root, "result");
         cJSON* sID = cJSON_GetObjectItem(root, "sessionID");
@@ -117,10 +112,14 @@ int main()
         cJSON_Delete(root);
         return 0;
     }else {
+        //取得错误原因字符串 const char *curl_easy_strerror(CURLcode errornum )
+        const char *strRea = curl_easy_strerror(res);
         printf("curl easy perform error, res = %d\n", res);
+        printf("error reason = %s\n", strRea);
         ret = -1;
     }
     curl_easy_cleanup(curl);
     curl_global_cleanup();
+    curl_slist_free_all(headers);
     return ret;
 }

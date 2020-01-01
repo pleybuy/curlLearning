@@ -23,6 +23,12 @@ void generic_cb(struct evhttp_request* req, void* arg)
 void test_cb(struct evhttp_request* req, void* arg)
 {
     const char* uri = evhttp_request_get_uri(req);
+
+    //获得请求头
+    struct evkeyvalq *kv = evhttp_request_get_input_headers(req);
+
+
+
     /*判断req是不是get请求*/
     if(evhttp_request_get_command(req) == EVHTTP_REQ_GET){
         struct evbuffer* buf = evbuffer_new();
