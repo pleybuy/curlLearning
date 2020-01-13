@@ -22,6 +22,14 @@ void generic_cb(struct evhttp_request* req, void* arg)
     evbuffer_add(req->output_buffer, s, strlen(s));
     evhttp_send_reply(req, 200, "OK", NULL);
 }
+int headerCB(struct evhttp_request *req, void *arg){
+    struct evkeyvalq *headers= evhttp_request_get_input_headers(req);
+    struct evkeyval*header;
+    TAILQ_FOREACH(header, headers, next){
+        printf("<%s : %s>\n", header->key, header->value);
+    }
+    return 0;
+}
 
 void test_cb(struct evhttp_request* req, void* arg)
 {
@@ -29,12 +37,16 @@ void test_cb(struct evhttp_request* req, void* arg)
     printf("get uri:%s\n", uri);
 
     //获得请求头
-    struct evkeyvalq *headers =  req->input_headers;
     printf("===========print req headers=====================\n");
-    while(headers != NULL){
-        printf("%s: %s\n", headers->tqh_first->key, headers->tqh_first->value);
-        headers = (struct evkeyvalq *)headers->tqh_first->next.tqe_next;
+    evhttp_request_set_header_cb(req, headerCB);
+    struct evkeyvalq *headers= evhttp_request_get_input_headers(req);
+    struct evkeyval *header;
+    //TAILQ的API待学习
+    TAILQ_FOREACH(header, headers, next){
+        printf("<%s : %s>\n", header->key, header->value);
     }
+    const char * test = evhttp_find_header(headers, "test");
+    printf("test = %s\n", test);
     printf("===========print req headers end================\n");
 
     /*判断req是不是get请求*/
