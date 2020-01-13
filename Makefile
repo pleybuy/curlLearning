@@ -33,7 +33,7 @@ $(libeventTest):test2.o
 
 #localClient
 $(localClient):localClient.o
-    $(cc) $^ -o $@
+	$(cc) $^ -o $@
 
 #clean
 clean:

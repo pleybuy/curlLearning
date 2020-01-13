@@ -106,9 +106,17 @@ int main()
         //7.处理返回的数据
         LOG("client", "responseData", responseData.data);
         //printf("body = %s\n", responseData.data);
+        //应答头
         printf("headLen = %d\n", (int)headData.data_len);
         printf("head = %s", headData.data);
         printf("============================================\n");
+        //获取应答码
+        CURLcode code;
+        curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &code);
+        printf("CURLcode : %d\n",code);
+
+
+
         cJSON* root = cJSON_Parse(responseData.data);
         cJSON* result = cJSON_GetObjectItem(root, "result");
         cJSON* sID = cJSON_GetObjectItem(root, "sessionID");
