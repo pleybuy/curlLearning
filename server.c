@@ -31,6 +31,7 @@ int headerCB(struct evhttp_request *req, void *arg){
     return 0;
 }
 
+
 void test_cb(struct evhttp_request* req, void* arg)
 {
     const char* uri = evhttp_request_get_uri(req);
@@ -38,7 +39,6 @@ void test_cb(struct evhttp_request* req, void* arg)
 
     //获得请求头
     printf("===========print req headers=====================\n");
-    evhttp_request_set_header_cb(req, headerCB);
     struct evkeyvalq *headers= evhttp_request_get_input_headers(req);
     struct evkeyval *header;
     //TAILQ的API待学习
@@ -105,6 +105,7 @@ void test_cb(struct evhttp_request* req, void* arg)
     evhttp_add_header(evhttp_request_get_output_headers(req), "Server", "libeventHttpd v0.1");
     evhttp_add_header(evhttp_request_get_output_headers(req), "Content-Type", "text/plain; charset=UTF-8");
     evhttp_add_header(evhttp_request_get_output_headers(req), "Connection", "close");
+    evhttp_add_header(evhttp_request_get_output_headers(req), "test", "test");
     char tmpBuf[10] = {0};
     sprintf(tmpBuf, "%d", HTTP_OK);
     evhttp_add_header(evhttp_request_get_output_headers(req), "status", tmpBuf);
