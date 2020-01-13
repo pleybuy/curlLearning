@@ -23,6 +23,7 @@ void generic_cb(struct evhttp_request* req, void* arg)
     evhttp_send_reply(req, 200, "OK", NULL);
 }
 int headerCB(struct evhttp_request *req, void *arg){
+    printf("请求头回调函数\n");
     struct evkeyvalq *headers= evhttp_request_get_input_headers(req);
     struct evkeyval*header;
     TAILQ_FOREACH(header, headers, next){

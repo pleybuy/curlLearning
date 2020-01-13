@@ -115,8 +115,6 @@ int main()
         curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &code);
         printf("CURLcode : %d\n",code);
 
-
-
         cJSON* root = cJSON_Parse(responseData.data);
         cJSON* result = cJSON_GetObjectItem(root, "result");
         cJSON* sID = cJSON_GetObjectItem(root, "sessionID");
