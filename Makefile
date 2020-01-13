@@ -24,7 +24,7 @@ $(server):server.o cJSON.o make_log.o
 	$(cc) $^ -o $@ $(LIBS)
 
 #test_curl程序
-$(test_curl):test1.o cJSON.o make_log.o
+$(test_curl):curlClient.o cJSON.o make_log.o
 	$(cc) $^ -o $@ $(LIBS)
 
 #libevent测试程序
@@ -34,8 +34,6 @@ $(libeventTest):test2.o
 #localClient
 $(localClient):localClient.o
     $(cc) $^ -o $@
-
-
 
 #clean
 clean:

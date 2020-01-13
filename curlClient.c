@@ -86,15 +86,20 @@ int main()
     curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 1);
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, 1);
 
+
     //9 消息头设置
-    struct curl_slist *headers = NULL;
-    headers = curl_slist_append(headers, "Hey-server-hey: how are you?");
-    headers = curl_slist_append(headers, "X-silly-content: yes");
+    struct curl_slist *headers = NULL;//this is important
+    headers = curl_slist_append(headers, "XsillyContent: how are you?");
+    headers = curl_slist_append(headers, "test: test");
+    headers = curl_slist_append(headers, "hey1: yes1");
+    headers = curl_slist_append(headers, "heydas2: yes2");
+    headers = curl_slist_append(headers, "hey3: yes3");
     /* pass our list of custom made headers */
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
     //7 将curl句柄向远程服务器提交请求
     res = curl_easy_perform(curl);
+    curl_slist_free_all(headers);
     if(res == CURLE_OK){
         printf("curl easy perform success res = %d\n",res);
         printf("============================================\n");

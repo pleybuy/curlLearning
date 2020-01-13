@@ -12,6 +12,9 @@
 #include <event2/http_struct.h>
 #include <event2/buffer.h>
 #include <include/cJSON.h>
+#include <sys/queue.h>
+#include <event2/event_struct.h>
+#include <event2/keyvalq_struct.h>
 
 void generic_cb(struct evhttp_request* req, void* arg)
 {
@@ -23,11 +26,16 @@ void generic_cb(struct evhttp_request* req, void* arg)
 void test_cb(struct evhttp_request* req, void* arg)
 {
     const char* uri = evhttp_request_get_uri(req);
+    printf("get uri:%s\n", uri);
 
     //获得请求头
-    struct evkeyvalq *kv = evhttp_request_get_input_headers(req);
-
-
+    struct evkeyvalq *headers =  req->input_headers;
+    printf("===========print req headers=====================\n");
+    while(headers != NULL){
+        printf("%s: %s\n", headers->tqh_first->key, headers->tqh_first->value);
+        headers = (struct evkeyvalq *)headers->tqh_first->next.tqe_next;
+    }
+    printf("===========print req headers end================\n");
 
     /*判断req是不是get请求*/
     if(evhttp_request_get_command(req) == EVHTTP_REQ_GET){
@@ -42,10 +50,10 @@ void test_cb(struct evhttp_request* req, void* arg)
         evhttp_add_header(evhttp_request_get_output_headers(req), "Content-Type", "text/plain; charset=UTF-8");
         evhttp_add_header(evhttp_request_get_output_headers(req), "Connection", "close");
         evhttp_send_reply(req, HTTP_OK, "OK", buf);
-        printf("get uri:%s\n", uri);
         LOG("server","test_cb", "get uri:%s\n", uri);
         return;
     }
+
     //如果不是post请求  直接返回 200 OK
     if(evhttp_request_get_command(req) != EVHTTP_REQ_POST){
         evhttp_send_reply(req, 200, "OK", NULL);
@@ -73,8 +81,6 @@ void test_cb(struct evhttp_request* req, void* arg)
     cJSON* name = cJSON_GetObjectItem(root, "name");
     cJSON* age = cJSON_GetObjectItem(root, "age");
     printf("================\n name = %s\n age = %d \n===================", name->valuestring, age->valueint);
-
-
     //todo some work to do with unpacked json data
     cJSON_Delete(root);
     //回包
